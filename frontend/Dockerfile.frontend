@@ -1,0 +1,23 @@
+# Use an official Node.js image as a parent image
+FROM node:14-alpine
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY node_modules/ /app/node_modules/
+COPY public/ /app/public/
+COPY src/ /app/src/
+COPY package.json /app/
+COPY package-lock.json /app/
+COPY .env /app/
+
+# Install dependencies
+RUN npm install
+RUN npm install react-router-dom --save
+
+# Expose port 3001 to the world outside this container
+EXPOSE 3001
+
+# Run the application
+CMD ["npm", "start"]
