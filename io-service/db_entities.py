@@ -1,6 +1,6 @@
 import mongoengine
 from mongoengine import Document, StringField, FloatField
 
-class Product(Document):
+class Products(Document):
     product = StringField(required=True, unique=True)
-    price = FloatField(required=True)
+    price = StringField(required=True)
