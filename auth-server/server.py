@@ -52,8 +52,8 @@ else:
     print("Connected to database!")
 
 
-
-@app.route('/api//register', methods=['POST'])
+# ------------- Register endpoint
+@app.route('/api/register', methods=['POST'])
 def register():
     try:
         payload = request.get_json()
@@ -74,8 +74,30 @@ def register():
     
     except mongoengine.errors.NotUniqueError as e:
         return '', 400
+    
+
+# ------------- Login endpoint
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        payload = request.get_json()
+        username = payload['username']
+        password = payload['password']
+
+        user = Users.objects(username=username).first()
+        if user is None:
+            return 'Not found', 404
+
+        if user.password == password:
+            return 'Login successful', 200
+        else:
+            return 'Wrong password', 401
+
+    except mongoengine.errors.ValidationError as e:
+        return '', 400
 
 
+# For debugging purposes
 @app.route('/api/users', methods=['GET'])
 def getUsers():
     try:
@@ -87,6 +109,16 @@ def getUsers():
             })
         return json.dumps(response), 200
         
+    except mongoengine.errors.ValidationError as e:
+        return '', 400
+
+
+# For debugging purposes
+@app.route('/api/remove', methods=['DELETE'])
+def delete_users():
+    try:
+        Users.objects.delete()
+        return '', 200
     except mongoengine.errors.ValidationError as e:
         return '', 400
 
