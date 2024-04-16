@@ -18,6 +18,23 @@ services:
     networks:
       - rest_api
 
+  io-service:
+    build:
+      context: .
+      dockerfile: io-service/Dockerfile
+    container_name: io-service
+    environment:
+      USERNAME_DB: admin
+      PASSWORD_DB: admin
+      DB_NAME: mongo
+    restart: always
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+    networks:
+      - rest_api
+
   mongo:
     image: mongo:latest
     hostname: mongo
