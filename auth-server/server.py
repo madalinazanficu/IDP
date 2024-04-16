@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
-
-from pymongo import MongoClient
-
 import mongoengine
-from mongoengine import connect
 import json
+import os
+
+
+from flask import Flask, request
+from pymongo import MongoClient
+from mongoengine import connect
 from db_entities import Users
 
 
@@ -59,10 +60,11 @@ def register():
         username = payload['username']
         password = payload['password']
 
-        user = User(username, password)
+        user = Users(username, password)
         user.save()
         return json.dumps, 201
-    catch:
+    
+    except mongoengine.errors.NotUniqueError as e:
         return '', 400
 
 
@@ -80,3 +82,13 @@ def getUsers():
     except mongoengine.errors.ValidationError as e:
         return '', 400
 
+
+# ------------- Definire rute
+@app.route('/')
+def hello_world(): 
+    return "Hello World!"
+
+
+# ------------- Pornire server Flask
+if __name__ == '__main__':
+    app.run('0.0.0.0', port=6000, debug=True)
