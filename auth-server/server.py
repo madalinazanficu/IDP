@@ -1,0 +1,82 @@
+from flask import Flask, request, jsonify
+
+from pymongo import MongoClient
+
+import mongoengine
+from mongoengine import connect
+import json
+from db_entities import Users
+
+
+# Responses codes:
+#     200 - OK
+#     201 - Created
+#     400 - Bad Request
+#     404 - Not Found
+#     409 - Conflict - NonUniqueError
+
+def connect_to_database():
+    try:
+        client = MongoClient(host=os.environ['DB_NAME'],
+                             port=27017,
+                             username=os.environ['USERNAME_DB'],
+                             password=os.environ['PASSWORD_DB'],
+                             authSource='admin')
+
+        db = client[os.environ['DB_NAME']]
+
+        connect(
+            db=os.environ['DB_NAME'],
+            host=os.environ['DB_NAME'],
+            username=os.environ['USERNAME_DB'],
+            password=os.environ['PASSWORD_DB'],
+            authentication_source='admin'
+        )
+        return db
+
+    except:
+        print("Error connecting to database!")
+        return None
+
+# ------------- Definire aplicatie Flask
+app = Flask(__name__)
+
+
+# ------------ Autentificare la baza de date
+database_connection = connect_to_database()
+if database_connection is None:
+    print("Exiting...")
+    exit(1)
+else:
+    print("Connected to database!")
+
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        payload = request.get_json()
+        username = payload['username']
+        password = payload['password']
+
+        user = User(username, password)
+        user.save()
+        return json.dumps, 201
+    catch:
+        return '', 400
+
+
+@app.route('/users', methods=['GET'])
+def getUsers():
+    try:
+        users = Users.objects
+        response = []
+        for user in users:
+            response.append({
+                "username" : user.username
+            })
+        return json.dumps(response), 200
+        
+    except mongoengine.errors.ValidationError as e:
+        return '', 400
+
