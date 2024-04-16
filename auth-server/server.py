@@ -53,22 +53,30 @@ else:
 
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/api//register', methods=['POST'])
 def register():
     try:
         payload = request.get_json()
         username = payload['username']
         password = payload['password']
 
-        user = Users(username, password)
-        user.save()
-        return json.dumps, 201
+        try:
+            user = Users(username=username, password=password)
+            user.save()
+            response = {
+                "username": user.username,
+                "password": user.password
+            }
+            return json.dumps(response), 201
+        
+        except mongoengine.errors.NotUniqueError as e:
+            return '', 409
     
     except mongoengine.errors.NotUniqueError as e:
         return '', 400
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/api/users', methods=['GET'])
 def getUsers():
     try:
         users = Users.objects
