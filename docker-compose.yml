@@ -9,7 +9,9 @@ services:
     environment:
       USERNAME_DB: admin
       PASSWORD_DB: admin
-      DB_NAME: mongo
+      DB_HOSTNAME: mongo
+      DB_NAME: clients_db
+      DB_PORT: 27017
     restart: always
     ports:
       - "6000:6000"
@@ -26,7 +28,9 @@ services:
     environment:
       USERNAME_DB: admin
       PASSWORD_DB: admin
-      DB_NAME: mongo
+      DB_HOSTNAME: mongo
+      DB_NAME: products_db
+      DB_PORT: 27017
     restart: always
     ports:
       - "5001:5001"

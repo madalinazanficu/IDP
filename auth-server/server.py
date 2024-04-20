@@ -18,19 +18,21 @@ from db_entities import Users
 
 def connect_to_database():
     try:
-        client = MongoClient(host=os.environ['DB_NAME'],
-                             port=27017,
-                             username=os.environ['USERNAME_DB'],
-                             password=os.environ['PASSWORD_DB'],
+        client = MongoClient(host=os.getenv('DB_HOSTNAME', 'mongo'),
+                             port=int(os.getenv('DB_PORT', 27017)),
+                             username=os.getenv('USERNAME_DB', 'admin'),
+                             password=os.getenv('PASSWORD_DB', 'admin'),
                              authSource='admin')
 
-        db = client[os.environ['DB_NAME']]
+        db_name = os.getenv('DB_NAME', 'clients_db')
+        db = client[db_name]
 
         connect(
-            db=os.environ['DB_NAME'],
-            host=os.environ['DB_NAME'],
-            username=os.environ['USERNAME_DB'],
-            password=os.environ['PASSWORD_DB'],
+            db=db_name,
+            host=os.getenv('DB_HOSTNAME', 'mongo'),
+            port=int(os.getenv('DB_PORT', 27017)),
+            username=os.getenv('USERNAME_DB', 'admin'),
+            password=os.getenv('PASSWORD_DB', 'admin'),
             authentication_source='admin'
         )
         return db
@@ -74,7 +76,6 @@ def register():
     
     except mongoengine.errors.NotUniqueError as e:
         return '', 400
-    
 
 # ------------- Login endpoint
 @app.route('/api/login', methods=['POST'])

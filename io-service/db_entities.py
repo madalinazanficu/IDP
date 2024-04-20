@@ -1,6 +1,8 @@
 import mongoengine
-from mongoengine import Document, StringField, FloatField
+from mongoengine import Document, StringField, SequenceField, FloatField
 
 class Products(Document):
-    product = StringField(required=True, unique=True)
-    price = StringField(required=True)
+    _id = SequenceField(primary_key=True)
+    product = StringField(required=True)
+    price = FloatField(required=True)
+    category = StringField(required=True)
