@@ -14,7 +14,7 @@ import os
 from flask import Flask, request, Response, jsonify
 from pymongo import MongoClient
 from mongoengine import connect
-from db_entities import Products
+from db_entities import Products, Categories
 
 def connect_to_database():
     try:
@@ -69,9 +69,10 @@ def productSerializer(product):
         'category': str(product.category)
     }
 
-# ------------- Add new product endpoint
-@app.route('/api/product', methods=['POST'])
-def add_product():
+
+# ------------- Create category endpoint
+@app.route('/api/category', methods=['POST'])
+def create_category():
     # Extract payload
     payload = getRequestBody()
 
@@ -80,31 +81,68 @@ def add_product():
     
     # Extract data from payload
     name = payload.get('name')
-    price = payload.get('price')
-    category = payload.get('category')
 
     # Check if all required fields are present
-    if not name or not price:
+    if not name:
         return Response(status=400)
-    else:
-        try:
-            price = float(price)
-        except:
-            return Response(status=400)
-        
-        if not category:
-            category = 'Other'
-
-    # Create new product
-    product = Products(product=name, price=price, category=category)
+    
+    # Create new category
+    category = Categories(name=name)
     try:
-        product.save()
+        category.save()
     except mongoengine.errors.NotUniqueError:
         return Response(status=409)
     except:
         return Response(status=400)
     
-    return jsonify({'id': product.pk}), 201
+    return jsonify({'name': category.name}), 201
+
+
+
+# ------------- Get all categories endpoint
+@app.route('/api/categories', methods=['GET'])
+def get_categories():
+    return json.dumps(list(Categories.objects.all()), default=str), 200
+
+
+
+
+# ------------- Add new product endpoint
+# @app.route('/api/product', methods=['POST'])
+# def add_product():
+#     # Extract payload
+#     payload = getRequestBody()
+
+#     if not payload:
+#         return Response(status=400)
+    
+#     # Extract data from payload
+#     name = payload.get('name')
+#     price = payload.get('price')
+#     category = payload.get('category')
+
+#     # Check if all required fields are present
+#     if not name or not price:
+#         return Response(status=400)
+#     else:
+#         try:
+#             price = float(price)
+#         except:
+#             return Response(status=400)
+        
+#         if not category:
+#             category = 'Other'
+
+#     # Create new product
+#     product = Products(product=name, price=price, category=category)
+#     try:
+#         product.save()
+#     except mongoengine.errors.NotUniqueError:
+#         return Response(status=409)
+#     except:
+#         return Response(status=400)
+    
+#     return jsonify({'id': product.pk}), 201
     
 
 # ------------- Get all products endpoint
