@@ -73,7 +73,7 @@ def add_product():
         except mongoengine.errors.NotUniqueError as e:
             return '', 409
     except:
-        return "Bad Request", 400
+        return '', 400
     
 
 # ------------- Get all products endpoint
