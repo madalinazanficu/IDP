@@ -27,5 +27,14 @@ def login():
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
 
+
+@app.route('/users', methods=['GET'])
+def getUsers():
+    users = mongo.db.users.find({}, {'_id': 0, 'password': 0})
+    user_list = []
+    for user in users:
+        user_list.append(user)
+    return jsonify({'users': user_list}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

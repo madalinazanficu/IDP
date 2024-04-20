@@ -1,34 +1,44 @@
 version: '3'
 services:
-  auth:
+
+  auth-server:
     build:
-      context: ./auth_service
-      dockerfile: Dockerfile.auth
-    ports:
-      - "5002:5002"
+      context: .
+      dockerfile: auth-server/Dockerfile
+    container_name: auth-server
+    environment:
+      USERNAME_DB: admin
+      PASSWORD_DB: admin
+      DB_NAME: mongo
     restart: always
-    depends_on:
-      - mongodb
-  product:
-    build:
-      context: ./product_service
-      dockerfile: Dockerfile.product
     ports:
-      - "5001:5001"
-    restart: always
+      - "6000:6000"
     depends_on:
-      - mongodb
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "3001:3001"
+      - mongo
+    networks:
+      - rest_api
+
+  mongo:
+    image: mongo:latest
+    hostname: mongo
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
     restart: always
-    depends_on:
-      - auth
-      - product
-  mongodb:
-    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: mongo
+      MONGO_DATA_DIR: /data/db
+    networks:
+      - rest_api
     ports:
       - "27017:27017"
+
+volumes:
+  mongo_data: {}
+  db_data : {}
+
+networks:
+  rest_api:
+    name: rest_api
