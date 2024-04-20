@@ -4,7 +4,7 @@ from mongoengine import Document, StringField, SequenceField, FloatField, CASCAD
 
 class Categories(Document):
     _id = SequenceField(primary_key=True)
-    name = StringField(equired=True, unique=True)
+    name = StringField(required=True, unique=True)
 
 class Products(Document):
     _id = SequenceField(primary_key=True)
@@ -12,4 +12,5 @@ class Products(Document):
     price = FloatField(required=True)
     quantity = FloatField(required=True)
     description = StringField(required=True)
+    category = ReferenceField(Categories, reverse_delete_rule=CASCADE)
 
