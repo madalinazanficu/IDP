@@ -66,7 +66,14 @@ def productSerializer(product):
         'id': int(product.id),
         'product': str(product.product),
         'price': float(product.price),
-        'category': str(product.category)
+        'quantity': float(product.quantity),
+        'description': str(product.description)
+    }
+
+def categorySerializer(category):
+    return {
+        'id': int(category.id),
+        'name': str(category.name)
     }
 
 
@@ -102,47 +109,45 @@ def create_category():
 # ------------- Get all categories endpoint
 @app.route('/api/categories', methods=['GET'])
 def get_categories():
-    return json.dumps(list(Categories.objects.all()), default=str), 200
+    return json.dumps(list(Categories.objects.all()), default=categorySerializer), 200
 
 
 
 
 # ------------- Add new product endpoint
-# @app.route('/api/product', methods=['POST'])
-# def add_product():
-#     # Extract payload
-#     payload = getRequestBody()
+@app.route('/api/product', methods=['POST'])
+def add_product():
+    # Extract payload
+    payload = getRequestBody()
 
-#     if not payload:
-#         return Response(status=400)
+    if not payload:
+        return Response(status=400)
     
-#     # Extract data from payload
-#     name = payload.get('name')
-#     price = payload.get('price')
-#     category = payload.get('category')
+    # Extract data from payload
+    name = payload.get('name')
+    price = payload.get('price')
+    quantity = payload.get('quantity')
+    description = payload.get('description')
 
-#     # Check if all required fields are present
-#     if not name or not price:
-#         return Response(status=400)
-#     else:
-#         try:
-#             price = float(price)
-#         except:
-#             return Response(status=400)
-        
-#         if not category:
-#             category = 'Other'
+    # Check if all required fields are present
+    if not name or not price or not quantity or not description:
+        return Response(status=400)
+    else:
+        try:
+            price = float(price)
+        except:
+            return Response(status=400)
 
-#     # Create new product
-#     product = Products(product=name, price=price, category=category)
-#     try:
-#         product.save()
-#     except mongoengine.errors.NotUniqueError:
-#         return Response(status=409)
-#     except:
-#         return Response(status=400)
+    # Create new product
+    product = Products(product=name, price=price, quantity=quantity, description=description)
+    try:
+        product.save()
+    except mongoengine.errors.NotUniqueError:
+        return Response(status=409)
+    except:
+        return Response(status=400)
     
-#     return jsonify({'id': product.pk}), 201
+    return jsonify({'id': product.pk}), 201
     
 
 # ------------- Get all products endpoint
