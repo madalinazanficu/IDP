@@ -78,7 +78,7 @@ def categorySerializer(category):
     }
 
 
-# ------------- Create category endpoint
+# ---------------------------------------------------------- CATEGORY ENDPOINTS
 @app.route('/api/category', methods=['POST'])
 def create_category():
     # Extract payload
@@ -115,7 +115,7 @@ def get_categories():
 
 
 
-# ------------- Add new product endpoint
+# ---------------------------------------------------------- PRODUCT ENDPOINTS
 @app.route('/api/product', methods=['POST'])
 def add_product():
     # Extract payload
@@ -145,7 +145,11 @@ def add_product():
             return Response(status=400)
 
     # Create new product
-    product = Products(product=name, price=price, quantity=quantity, description=description, category=category)
+    product = Products(product=name,
+                       price=price,
+                       quantity=quantity,
+                       description=description,
+                       category=category)
     try:
         product.save()
     except mongoengine.errors.NotUniqueError:
@@ -154,7 +158,58 @@ def add_product():
         return Response(status=400)
     
     return jsonify({'id': product.pk}), 201
+
+
+@app.route('/api/product/<id>', methods=['GET'])
+def get_product(id):
+    try:
+        product = Products.objects(pk=id).get()
+    except:
+        return Response(status=404)
     
+    return json.dumps(product, default=productSerializer), 200
+    
+
+@app.route('/api/product/<id>', methods=['DELETE'])
+def delete_product(id):
+    try:
+        product = Products.objects(pk=id).get()
+    except:
+        return Response(status=404)
+    
+    product.delete()
+    return 'Product deleted!', 200
+
+
+@app.route('/api/product/<id>', methods=['PUT'])
+def update_product_quantity(id):
+    # Extract payload
+    payload = getRequestBody()
+
+    if not payload:
+        return Response(status=400)
+    
+    # Extract data from payload
+    quantity = payload.get('quantity')
+
+    if not quantity:
+        return Response(status=400)
+    else:
+        try:
+            quantity = float(quantity)
+        except:
+            return Response(status=400)
+    
+    try:
+        product = Products.objects(pk=id).get()
+    except:
+        return Response(status=404)
+    
+    product.quantity = quantity
+    product.save()
+    return jsonify({'id': product.pk, 'name': product.product, "quantity": product.quantity}), 200
+
+
 
 # ------------- Get all products endpoint
 @app.route('/api/products', methods=['GET'])
