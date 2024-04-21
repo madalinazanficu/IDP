@@ -54,6 +54,14 @@ else:
     print("Connected to database!")
 
 
+def usersSerializer(user):
+    return {
+        "username": user.username,
+        "password": "*" * len(user.password),
+        "type": user.type
+    }
+
+
 # ------------- Register endpoint
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -61,13 +69,15 @@ def register():
         payload = request.get_json()
         username = payload['username']
         password = payload['password']
+        type = payload['type']
 
         try:
-            user = Users(username=username, password=password)
+            user = Users(username=username, password=password, type=type)
             user.save()
             response = {
                 "username": user.username,
-                "password": user.password
+                "password": user.password,
+                "type": user.type
             }
             return json.dumps(response), 201
         
@@ -98,20 +108,20 @@ def login():
         return '', 400
 
 
+@app.route('/api/user/<username>', methods=['GET'])
+def getUser(username):
+    user = Users.objects(username=username).first()
+    if user is None:
+        return 'Not found', 404
+
+    return json.dumps(user, default=usersSerializer), 200
+
+
+
 # For debugging purposes
 @app.route('/api/users', methods=['GET'])
 def getUsers():
-    try:
-        users = Users.objects
-        response = []
-        for user in users:
-            response.append({
-                "username" : user.username
-            })
-        return json.dumps(response), 200
-        
-    except mongoengine.errors.ValidationError as e:
-        return '', 400
+    return json.dumps(list(Users.objects.all()), default=usersSerializer), 200
 
 
 # For debugging purposes
