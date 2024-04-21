@@ -41,6 +41,20 @@ services:
     networks:
       - rest_api
 
+  business-service:
+    build:
+      context: .
+      dockerfile: business-service/Dockerfile
+    container_name: business-service
+    restart: always
+    ports:
+      - "4001:4001"
+    depends_on:
+      - io-service
+      - auth-server
+    networks:
+      - rest_api
+
   mongo:
     image: mongo:latest
     hostname: mongo
