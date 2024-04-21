@@ -78,8 +78,8 @@ def categorySerializer(category):
     }
 
 
-# ---------------------------------------------------------- CATEGORY ENDPOINTS
-@app.route('/api/category', methods=['POST'])
+# ------------- Create category endpoint
+@app.route('/io/category', methods=['POST'])
 def create_category():
     # Extract payload
     payload = getRequestBody()
@@ -108,15 +108,15 @@ def create_category():
 
 
 # ------------- Get all categories endpoint
-@app.route('/api/categories', methods=['GET'])
+@app.route('/io/categories', methods=['GET'])
 def get_categories():
     return json.dumps(list(Categories.objects.all()), default=categorySerializer), 200
 
 
 
 
-# ---------------------------------------------------------- PRODUCT ENDPOINTS
-@app.route('/api/product', methods=['POST'])
+# ------------- Add new product endpoint
+@app.route('/io/product', methods=['POST'])
 def add_product():
     # Extract payload
     payload = getRequestBody()
@@ -160,7 +160,7 @@ def add_product():
     return jsonify({'id': product.pk}), 201
 
 
-@app.route('/api/product/<id>', methods=['GET'])
+@app.route('/io/product/<id>', methods=['GET'])
 def get_product(id):
     try:
         product = Products.objects(pk=id).get()
@@ -170,7 +170,7 @@ def get_product(id):
     return json.dumps(product, default=productSerializer), 200
     
 
-@app.route('/api/product/<id>', methods=['DELETE'])
+@app.route('/io/product/<id>', methods=['DELETE'])
 def delete_product(id):
     try:
         product = Products.objects(pk=id).get()
@@ -181,7 +181,7 @@ def delete_product(id):
     return 'Product deleted!', 200
 
 
-@app.route('/api/product/<id>', methods=['PUT'])
+@app.route('/io/product/<id>', methods=['PUT'])
 def update_product_quantity(id):
     # Extract payload
     payload = getRequestBody()
@@ -212,7 +212,7 @@ def update_product_quantity(id):
 
 
 # ------------- Get all products endpoint
-@app.route('/api/products', methods=['GET'])
+@app.route('/io/products', methods=['GET'])
 def get_products():
     return json.dumps(list(Products.objects.all()), default=productSerializer), 200
 

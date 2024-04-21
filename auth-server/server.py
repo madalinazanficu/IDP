@@ -63,7 +63,7 @@ def usersSerializer(user):
 
 
 # ------------- Register endpoint
-@app.route('/api/register', methods=['POST'])
+@app.route('/auth/register', methods=['POST'])
 def register():
     try:
         payload = request.get_json()
@@ -88,7 +88,7 @@ def register():
         return '', 400
 
 # ------------- Login endpoint
-@app.route('/api/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST'])
 def login():
     try:
         payload = request.get_json()
@@ -108,7 +108,7 @@ def login():
         return '', 400
 
 
-@app.route('/api/user/<username>', methods=['GET'])
+@app.route('/auth/user/<username>', methods=['GET'])
 def getUser(username):
     user = Users.objects(username=username).first()
     if user is None:
@@ -119,13 +119,13 @@ def getUser(username):
 
 
 # For debugging purposes
-@app.route('/api/users', methods=['GET'])
+@app.route('/auth/users', methods=['GET'])
 def getUsers():
     return json.dumps(list(Users.objects.all()), default=usersSerializer), 200
 
 
 # For debugging purposes
-@app.route('/api/remove', methods=['DELETE'])
+@app.route('/auth/remove', methods=['DELETE'])
 def delete_users():
     try:
         Users.objects.delete()
