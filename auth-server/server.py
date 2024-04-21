@@ -57,7 +57,7 @@ else:
 def usersSerializer(user):
     return {
         "username": user.username,
-        "password": user.password,
+        "password": "*" * len(user.password),
         "type": user.type
     }
 
