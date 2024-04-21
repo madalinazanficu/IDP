@@ -22,3 +22,15 @@ services:
         methods:
           - POST
           - GET
+
+  - name: business-service
+    url: http://host.docker.internal:4001/business
+    routes:
+      - name: business-service-route
+        paths: 
+          - /business/*
+        methods:
+          - POST
+          - GET
+          - DELETE
+          - PUT

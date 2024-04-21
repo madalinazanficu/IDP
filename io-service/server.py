@@ -68,7 +68,8 @@ def productSerializer(product):
         'price': float(product.price),
         'quantity': float(product.quantity),
         'description': str(product.description),
-        'category': str(product.category.name)
+        'category': str(product.category.name),
+        'username': str(product.username)
     }
 
 def categorySerializer(category):
@@ -103,7 +104,7 @@ def create_category():
     except:
         return Response(status=400)
     
-    return jsonify({'name': category.name}), 201
+    return jsonify({'id': category._id}), 201
 
 
 
@@ -130,17 +131,19 @@ def add_product():
     quantity = payload.get('quantity')
     description = payload.get('description')
     category_id = payload.get('category_id')
+    username = payload.get('username')
 
     category = Categories.objects(pk=category_id).get()
     if not category:
         return 'Category not found!', 404
     
     # Check if all required fields are present
-    if not name or not price or not quantity or not description:
+    if not name or not price or not quantity or not description or not username:
         return Response(status=400)
     else:
         try:
             price = float(price)
+            quantity = int(quantity)
         except:
             return Response(status=400)
 
@@ -149,7 +152,8 @@ def add_product():
                        price=price,
                        quantity=quantity,
                        description=description,
-                       category=category)
+                       category=category,
+                       username=username)
     try:
         product.save()
     except mongoengine.errors.NotUniqueError:
@@ -180,7 +184,7 @@ def delete_product(id):
     product.delete()
     return 'Product deleted!', 200
 
-
+# TODO: update only present fields
 @app.route('/io/product/<id>', methods=['PUT'])
 def update_product_quantity(id):
     # Extract payload
