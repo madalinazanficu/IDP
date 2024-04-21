@@ -10,6 +10,7 @@ WORKDIR /auth-server
 # Copy the source code into the container
 COPY auth-server/server.py .
 COPY auth-server/db_entities.py .
+COPY auth-server/utils.py .
 
 # Expose the port that the Flask app runs on
 EXPOSE 6000
