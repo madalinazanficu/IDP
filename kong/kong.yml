@@ -1,0 +1,24 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: auth-server
+    url: http://host.docker.internal:6000/auth
+    routes:
+      - name: auth-server-route
+        paths: 
+          - /auth/*
+        methods:
+          - POST
+          - GET
+          - DELETE
+          
+  - name: io-service
+    url: http://host.docker.internal:5001/io
+    routes:
+      - name: io-service-route
+        paths: 
+          - /io/*
+        methods:
+          - POST
+          - GET
