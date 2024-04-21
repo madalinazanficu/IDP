@@ -5,3 +5,21 @@ Rulare docker compose:
 
 Kong listens for incoming user requests on port 8000. The Admin API listens on port 8001. User requests are routed
 to the appropiate service based on the request path (either auth or io).
+
+## Docker Swarm
+
+1. Init a manager node: docker swarm init
+2. Deploy the stack: docker stack deploy -c docker-compose.yml idp-project
+3. Stop the stack: docker stack rm idp-project
+4. View services: docker service ls
+5. View nodes: docker node ls
+
+### Removing nodes (managers should be downgraded to workers before removing them)
+
+- docker node update --role worker <node_name>
+- docker node rm <node_name>
+
+docker node update --availability drain <node_name>
+docker node update --availability active <node_name>
+
+Removing the last manager node, means disolving the cluster: docker swarm leave --force
