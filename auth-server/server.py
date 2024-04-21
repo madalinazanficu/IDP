@@ -2,11 +2,11 @@ import mongoengine
 import json
 import os
 
-
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from mongoengine import connect
 from db_entities import Users
+from utils import generate_token, CREDENTIALS_ERROR
 
 
 # Responses codes:
@@ -74,10 +74,15 @@ def register():
         try:
             user = Users(username=username, password=password, type=type)
             user.save()
+
+            # Generate JWT token
+            token = generate_token({'username': username, 'type': type})
+
             response = {
                 "username": user.username,
                 "password": user.password,
-                "type": user.type
+                "type": user.type,
+                "token": token
             }
             return json.dumps(response), 201
         
@@ -97,12 +102,15 @@ def login():
 
         user = Users.objects(username=username).first()
         if user is None:
-            return 'Not found', 404
+            return CREDENTIALS_ERROR, 404
 
         if user.password == password:
-            return 'Login successful', 200
+            # Generate JWT token
+            token = generate_token({'username': username, 'type': user.type})
+
+            return jsonify({'token': token}), 200
         else:
-            return 'Wrong password', 401
+            return CREDENTIALS_ERROR, 401
 
     except mongoengine.errors.ValidationError as e:
         return '', 400
