@@ -2,9 +2,10 @@ version: '3'
 services:
 
   auth-server:
-    build:
-      context: .
-      dockerfile: auth-server/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: auth-server/Dockerfile
+    image: madalinazanficu/auth:latest
     container_name: auth-server
     environment:
       USERNAME_DB: admin
@@ -21,9 +22,10 @@ services:
       - rest_api
 
   io-service:
-    build:
-      context: .
-      dockerfile: io-service/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: io-service/Dockerfile
+    image: madalinazanficu/io-service:latest
     container_name: io-service
     environment:
       USERNAME_DB: admin
