@@ -6,14 +6,14 @@ services:
     #   context: .
     #   dockerfile: auth-server/Dockerfile
     image: madalinazanficu/auth:latest
-    container_name: auth-server
+    # container_name: auth-server
     environment:
       USERNAME_DB: admin
       PASSWORD_DB: admin
       DB_HOSTNAME: mongo
       DB_NAME: clients_db
       DB_PORT: 27017
-    restart: always
+    # restart: always
     ports:
       - "6000:6000"
     depends_on:
@@ -26,14 +26,14 @@ services:
     #   context: .
     #   dockerfile: io-service/Dockerfile
     image: madalinazanficu/io-service:latest
-    container_name: io-service
+    # container_name: io-service
     environment:
       USERNAME_DB: admin
       PASSWORD_DB: admin
       DB_HOSTNAME: mongo
       DB_NAME: products_db
       DB_PORT: 27017
-    restart: always
+    # restart: always
     ports:
       - "5001:5001"
     depends_on:
@@ -58,10 +58,10 @@ services:
   mongo:
     image: mongo:latest
     hostname: mongo
-    container_name: mongo
+    # container_name: mongo
     volumes:
       - mongo_data:/data/db
-    restart: always
+    # restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
@@ -76,8 +76,8 @@ services:
 
   mongo-gui:
     image: mongo-express:latest
-    container_name: mongo-gui
-    restart: always
+    # container_name: mongo-gui
+    # restart: always
     depends_on:
       - mongo
     ports:
@@ -92,7 +92,7 @@ services:
 
   kong:
     image: kong:latest
-    container_name: kong
+    # container_name: kong
     environment:
       KONG_DATABASE: 'off'
       KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
