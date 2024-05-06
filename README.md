@@ -30,5 +30,7 @@ Removing the last manager node, means disolving the cluster: docker swarm leave 
 Am descarcat fisierul .yml de pe site-ul oficial:
 https://docs.portainer.io/start/install-ce/server/swarm/linux
 
+Pentru accesarea platformei web: https://localhost:9443
+
 User: admin
 Parola: madalinazanficu
