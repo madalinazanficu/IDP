@@ -16,4 +16,4 @@ COPY auth-server/utils.py .
 EXPOSE 6000
 
 # Define the command to run the app
-CMD ["python3", "server.py"]
+CMD ["python3", "-u", "server.py"]

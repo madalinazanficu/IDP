@@ -16,4 +16,4 @@ COPY io-service/db_entities.py .
 EXPOSE 5001
 
 # Define the command to run the app
-CMD ["python3", "server.py"]
+CMD ["python3", "-u", "server.py"]
