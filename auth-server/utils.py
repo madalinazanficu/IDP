@@ -1,5 +1,6 @@
 import jwt
 from flask import request, Response
+from functools import wraps
 
 # Secret key to sign JWT tokens
 SECRET_KEY = "chupacabra"
@@ -37,7 +38,8 @@ def decode_token(token):
 
 # Token required decorator
 def token_required(f):
-    def decorator(*args, **kwargs):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
         token = extract_token()
         if not token:
             return Response(status=401)
@@ -49,7 +51,7 @@ def token_required(f):
         kwargs['token_payload'] = token_payload
         return f(*args, **kwargs)
 
-    return decorator
+    return decorated_function
 
 # # Validate token decorator
 # def token_required(f):

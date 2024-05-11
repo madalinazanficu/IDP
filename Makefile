@@ -1,14 +1,14 @@
 # Build Docker images
 build-auth:
-	docker build -t auth-service -f ./auth_service/Dockerfile.auth ./auth_service
+	docker build -t auth-server -f ./auth-server/Dockerfile ./auth-server
 
 build-product:
-	docker build -t product-service -f ./product_service/Dockerfile.product ./product_service
+	docker build -t io-service -f ./io-service/Dockerfile ./io-service
 
-build-frontend:
-	docker build -t frontend-service -f ./frontend/Dockerfile.frontend ./frontend
+build-business:
+	docker build -t business-service -f ./business-service/Dockerfile ./business-service
 
-build: build-auth build-product build-frontend
+build: build-auth build-product build-business
 
 # Run Docker Compose
 up:

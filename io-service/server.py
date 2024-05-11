@@ -184,7 +184,7 @@ def delete_product(id):
     product.delete()
     return 'Product deleted!', 200
 
-# TODO: update only present fields
+
 @app.route('/io/product/<id>', methods=['PUT'])
 def update_product_quantity(id):
     # Extract payload
@@ -195,23 +195,45 @@ def update_product_quantity(id):
     
     # Extract data from payload
     quantity = payload.get('quantity')
+    price = payload.get('price')
+    description = payload.get('description')
+    category_id = payload.get('category_id')
+    name = payload.get('name')
 
-    if not quantity:
-        return Response(status=400)
-    else:
-        try:
-            quantity = float(quantity)
-        except:
-            return Response(status=400)
-    
     try:
         product = Products.objects(pk=id).get()
     except:
-        return Response(status=404)
+        return 'Product not found!', 404
     
-    product.quantity = quantity
+    if quantity:
+        try:
+            quantity = float(quantity)
+            product.quantity = quantity
+        except:
+            return Response(status=400)
+        
+    if price:
+        try:
+            price = float(price)
+            product.price = price
+        except:
+            return Response(status=400)
+    
+    if description:
+        product.description = description
+    
+    if category_id:
+        try:
+            category = Categories.objects(pk=category_id).get()
+            product.category = category
+        except:
+            return Response(status=400)
+        
+    if name:
+        product.product = name
+
     product.save()
-    return jsonify({'id': product.pk, 'name': product.product, "quantity": product.quantity}), 200
+    return json.dumps(product, default=productSerializer), 200
 
 
 

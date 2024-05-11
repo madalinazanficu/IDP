@@ -8,6 +8,7 @@ services:
     image: madalinazanficu/auth:latest
     # container_name: auth-server
     environment:
+      PYTHONUNBUFFERED: 1
       USERNAME_DB: admin
       PASSWORD_DB: admin
       DB_HOSTNAME: mongo
@@ -28,6 +29,7 @@ services:
     image: madalinazanficu/io-service:latest
     # container_name: io-service
     environment:
+      PYTHONUNBUFFERED: 1
       USERNAME_DB: admin
       PASSWORD_DB: admin
       DB_HOSTNAME: mongo
@@ -47,6 +49,8 @@ services:
       dockerfile: business-service/Dockerfile
     container_name: business-service
     restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
     ports:
       - "4001:4001"
     depends_on:
