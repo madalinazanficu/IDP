@@ -1,6 +1,33 @@
 version: '3'
 services:
 
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    volumes:
+      - influxdb_storage:/var/lib/influxdb
+    networks:
+      - influxdb_business
+      - influxdb_gf
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 80:3000
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: pass
+    depends_on:
+      - influxdb
+    volumes:
+      - gf_storage:/var/lib/grafana
+      - ./Grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./Grafana/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - influxdb_gf
+
   auth-server:
     # build:
     #   context: .
@@ -20,7 +47,8 @@ services:
     depends_on:
       - mongo
     networks:
-      - rest_api
+      - mongo-auth
+      - kong-auth
 
   io-service:
     # build:
@@ -41,7 +69,8 @@ services:
     depends_on:
       - mongo
     networks:
-      - rest_api
+      - mongo-io
+      - business-io
 
   business-service:
     build:
@@ -57,7 +86,9 @@ services:
       - io-service
       - auth-server
     networks:
-      - rest_api
+      - business-io
+      - influxdb_business
+      - kong-business
 
   mongo:
     image: mongo:latest
@@ -72,7 +103,8 @@ services:
       MONGO_INITDB_DATABASE: mongo
       MONGO_DATA_DIR: /data/db
     networks:
-      - rest_api
+      - mongo-auth
+      - mongo-io
       - mongo-network
     ports:
       - "27017:27017"
@@ -96,7 +128,6 @@ services:
 
   kong:
     image: kong:latest
-    # container_name: kong
     environment:
       KONG_DATABASE: 'off'
       KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
@@ -113,15 +144,21 @@ services:
     volumes:
       - ./kong/kong.yml:/usr/local/kong/declarative/kong.yml
     networks:
-      - rest_api
+      - kong-business
+      - kong-auth
 
 volumes:
   mongo_data: {}
   db_data : {}
+  gf_storage: {}
+  influxdb_storage: {}
 
 networks:
-  rest_api:
-    name: rest_api
-
+  kong-business:
+  kong-auth:
   mongo-network:
-    name: mongo-network
+  influxdb_gf:
+  influxdb_business:
+  mongo-auth:
+  mongo-io:
+  business-io:

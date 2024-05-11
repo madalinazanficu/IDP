@@ -2,9 +2,28 @@ from flask import Flask, Response, jsonify
 import requests
 from utils import token_required
 from business_utils import partial_match, getRequestBody, createProductRequest
+from influxdb import InfluxDBClient
+
+def database_exists(name):
+        existing_databases = db_client.get_list_database()
+        for database in existing_databases:
+            if database["name"] == name:
+                return True
+        return False
 
 # ------------- Define Flask application
 app = Flask(__name__)
+
+# InfluxDB client
+db_client = InfluxDBClient(host='influxdb', port=8086)
+
+# connect to InfluxDB
+if not database_exists("idp"):
+    db_client.create_database("idp")
+db_client.switch_database("idp")
+
+category_counter = 0
+product_counter = 0
 
 # ------------- Utility functions
 def getOrCreateCategory(category):
@@ -21,6 +40,19 @@ def getOrCreateCategory(category):
     if not category_exists:
         response = requests.post('http://host.docker.internal:5001/io/category', json={'name': category})
         category_id = response.json()['id']
+
+        # Update metrics
+        global category_counter 
+        category_counter += 1
+        json_body = [
+            {
+                "measurement": "categories",
+                "fields": {
+                    "value": category_counter
+                }
+            }
+        ]
+        db_client.write_points(json_body)
     
     return category_id
 
@@ -73,6 +105,20 @@ def add_product(token_payload):
     payload = createProductRequest(name, price, quantity, description, category_id, username)
     
     response = requests.post('http://host.docker.internal:5001/io/product', json=payload)
+
+    # Update metrics
+    if response.status_code == 201:
+        global product_counter
+        product_counter += 1
+        json_body = [
+            {
+                "measurement": "products",
+                "fields": {
+                    "value": product_counter
+                }
+            }
+        ]
+        db_client.write_points(json_body)
     
     return Response(status=response.status_code)
 
@@ -161,6 +207,20 @@ def delete_product(token_payload, id):
     
     # Call io-service endpoint to delete product
     response = requests.delete(f'http://host.docker.internal:5001/io/product/{id}')
+
+    # Update metrics
+    if response.status_code == 200:
+        global product_counter
+        product_counter -= 1
+        json_body = [
+            {
+                "measurement": "products",
+                "fields": {
+                    "value": product_counter
+                }
+            }
+        ]
+        db_client.write_points(json_body)
 
     return Response(status=response.status_code)
 
