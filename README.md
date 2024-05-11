@@ -31,6 +31,7 @@ Am descarcat fisierul .yml de pe site-ul oficial:
 https://docs.portainer.io/start/install-ce/server/swarm/linux
 
 Pentru accesarea platformei web: https://localhost:9443
+docker stack deploy -c portainer-agent-stack.yml portainer
 
 User: admin
 Parola: madalinazanficu
