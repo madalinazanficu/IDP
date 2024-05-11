@@ -12,16 +12,6 @@ services:
           - POST
           - GET
           - DELETE
-          
-  - name: io-service
-    url: http://host.docker.internal:5001/io
-    routes:
-      - name: io-service-route
-        paths: 
-          - /io/*
-        methods:
-          - POST
-          - GET
 
   - name: business-service
     url: http://host.docker.internal:4001/business
