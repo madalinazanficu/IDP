@@ -8,7 +8,7 @@ to the appropiate service based on the request path (either auth or io).
 
 ## Docker Swarm
 
-1. Init a manager node: docker swarm init
+1. Init a manager node: docker swarm init --advertise-addr 172.18.0.89
 2. Deploy the stack: docker stack deploy -c docker-compose.yml idp-project
 3. Stop the stack: docker stack rm idp-project
 4. View services: docker service ls
@@ -35,3 +35,12 @@ docker stack deploy -c portainer-agent-stack.yml portainer
 
 User: admin
 Parola: madalinazanficu
+
+## Mango express credentials
+
+user: admin
+password: pass
+
+## Play with docker
+
+https://ip172-18-0-89-covnulqim2rg00cqbang-9443.direct.labs.play-with-docker.com/#!/init/admin
