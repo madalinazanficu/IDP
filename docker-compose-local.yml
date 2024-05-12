@@ -3,6 +3,7 @@ services:
 
   influxdb:
     image: influxdb:1.8
+    container_name: influxdb
     volumes:
       - influxdb_storage:/var/lib/influxdb
     networks:
@@ -12,6 +13,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - 80:3000
     environment:
@@ -27,7 +29,10 @@ services:
       - influxdb_gf
 
   auth-server:
-    image: mihneadinik/auth-server:latest
+    build:
+      context: .
+      dockerfile: auth-server/Dockerfile
+    container_name: auth-server
     environment:
       PYTHONUNBUFFERED: 1
       USERNAME_DB: admin
@@ -45,7 +50,10 @@ services:
       - kong-auth
 
   io-service:
-    image: mihneadinik/io-service:latest
+    build:
+      context: .
+      dockerfile: io-service/Dockerfile
+    container_name: io-service
     environment:
       PYTHONUNBUFFERED: 1
       USERNAME_DB: admin
@@ -53,6 +61,7 @@ services:
       DB_HOSTNAME: mongo
       DB_NAME: products_db
       DB_PORT: 27017
+    restart: always
     ports:
       - "5001:5001"
     depends_on:
@@ -62,7 +71,10 @@ services:
       - business-io
 
   business-service:
-    image: mihneadinik/business-service:latest
+    build:
+      context: .
+      dockerfile: business-service/Dockerfile
+    container_name: business-service
     restart: always
     environment:
       - PYTHONUNBUFFERED=1
@@ -79,8 +91,10 @@ services:
   mongo:
     image: mongo:latest
     hostname: mongo
+    container_name: mongo
     volumes:
       - mongo_data:/data/db
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
@@ -96,6 +110,8 @@ services:
 
   mongo-gui:
     image: mongo-express:latest
+    container_name: mongo-gui
+    restart: always
     depends_on:
       - mongo
     ports:

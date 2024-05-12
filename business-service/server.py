@@ -1,7 +1,6 @@
 from flask import Flask, Response, jsonify
 import requests
-from utils import token_required
-from business_utils import partial_match, getRequestBody, createProductRequest
+from business_utils import partial_match, getRequestBody, createProductRequest, token_required
 from influxdb import InfluxDBClient
 
 def database_exists(name):
