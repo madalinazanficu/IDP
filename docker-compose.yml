@@ -9,6 +9,10 @@ services:
       - influxdb_business
       - influxdb_gf
     restart: always
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   grafana:
     image: grafana/grafana:latest
@@ -25,6 +29,10 @@ services:
       - ./Grafana/dashboards:/etc/grafana/provisioning/dashboards
     networks:
       - influxdb_gf
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   auth-server:
     image: mihneadinik/auth-server:latest
@@ -35,7 +43,6 @@ services:
       DB_HOSTNAME: mongo
       DB_NAME: clients_db
       DB_PORT: 27017
-    # restart: always
     ports:
       - "6001:6001"
     depends_on:
@@ -43,6 +50,10 @@ services:
     networks:
       - mongo-auth
       - kong-auth
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
 
   io-service:
     image: mihneadinik/io-service:latest
@@ -60,6 +71,10 @@ services:
     networks:
       - mongo-io
       - business-io
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
 
   business-service:
     image: mihneadinik/business-service:latest
@@ -75,6 +90,10 @@ services:
       - business-io
       - influxdb_business
       - kong-business
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
 
   mongo:
     image: mongo:latest
@@ -92,6 +111,10 @@ services:
       - mongo-network
     ports:
       - "27017:27017"
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
 
   mongo-gui:
@@ -107,6 +130,10 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongo
     networks:
       - mongo-network
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   kong:
     image: kong:latest
@@ -128,6 +155,12 @@ services:
     networks:
       - kong-business
       - kong-auth
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+      restart_policy:
+        condition: on-failure
 
 volumes:
   mongo_data: {}
