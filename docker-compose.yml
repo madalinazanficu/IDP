@@ -76,6 +76,7 @@ services:
     build:
       context: .
       dockerfile: business-service/Dockerfile
+    # image: madalinazanficu/business-service:latest
     container_name: business-service
     restart: always
     environment:
