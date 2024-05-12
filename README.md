@@ -9,7 +9,7 @@ to the appropiate service based on the request path (either auth or io).
 ## Docker Swarm
 
 1. Init a manager node: docker swarm init
-2. Deploy the stack: docker stack deploy -c docker-compose.yml idp-project
+2. Deploy the stack: docker stack deploy -c docker-compose-swarm.yml idp-project
 3. Stop the stack: docker stack rm idp-project
 4. View services: docker service ls
 5. View nodes: docker node ls
