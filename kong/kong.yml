@@ -3,7 +3,7 @@ _transform: true
 
 services:
   - name: auth-server
-    url: http://host.docker.internal:6000/auth
+    url: http://host.docker.internal:6001/auth
     routes:
       - name: auth-server-route
         paths: 

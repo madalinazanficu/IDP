@@ -150,4 +150,4 @@ def hello_world():
 
 # ------------- Pornire server Flask
 if __name__ == '__main__':
-    app.run('0.0.0.0', port=6000, debug=True)
+    app.run('0.0.0.0', port=6001, debug=True)

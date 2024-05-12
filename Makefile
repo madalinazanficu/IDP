@@ -2,13 +2,13 @@
 build-auth:
 	docker build -t auth-server -f ./auth-server/Dockerfile ./auth-server
 
-build-product:
+build-io:
 	docker build -t io-service -f ./io-service/Dockerfile ./io-service
 
 build-business:
 	docker build -t business-service -f ./business-service/Dockerfile ./business-service
 
-build: build-auth build-product build-business
+build: build-auth build-io build-busines
 
 # Run Docker Compose
 up:
