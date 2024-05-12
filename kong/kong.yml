@@ -3,7 +3,7 @@ _transform: true
 
 services:
   - name: auth-server
-    url: http://host.docker.internal:6001/auth
+    url: http://auth-server:6001/auth
     routes:
       - name: auth-server-route
         paths: 
@@ -14,7 +14,7 @@ services:
           - DELETE
 
   - name: business-service
-    url: http://host.docker.internal:4001/business
+    url: http://business-service:4001/business
     routes:
       - name: business-service-route
         paths: 

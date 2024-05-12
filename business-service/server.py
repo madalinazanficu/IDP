@@ -27,7 +27,7 @@ product_counter = 0
 # ------------- Utility functions
 def getOrCreateCategory(category):
     # Call io-service endpoint to create or assign category
-    response = requests.get('http://host.docker.internal:5001/io/categories')
+    response = requests.get('http://io-service:5001/io/categories')
     categories = response.json()
     category_exists = False
     category_id = None
@@ -37,7 +37,7 @@ def getOrCreateCategory(category):
             category_id = c['id']
             break
     if not category_exists:
-        response = requests.post('http://host.docker.internal:5001/io/category', json={'name': category})
+        response = requests.post('http://io-service:5001/io/category', json={'name': category})
         category_id = response.json()['id']
 
         # Update metrics
@@ -103,7 +103,7 @@ def add_product(token_payload):
     username = token_payload.get('username')
     payload = createProductRequest(name, price, quantity, description, category_id, username)
     
-    response = requests.post('http://host.docker.internal:5001/io/product', json=payload)
+    response = requests.post('http://io-service:5001/io/product', json=payload)
 
     # Update metrics
     if response.status_code == 201:
@@ -126,7 +126,7 @@ def add_product(token_payload):
 @token_required
 def get_products(token_payload):
     # Call io-service endpoint to get all products
-    response = requests.get('http://host.docker.internal:5001/io/products')
+    response = requests.get('http://io-service:5001/io/products')
     
     return jsonify(response.json())
 
@@ -139,7 +139,7 @@ def get_personal_products(token_payload):
         return Response(status=403)
     
     # Call io-service endpoint to get all products
-    response = requests.get('http://host.docker.internal:5001/io/products')
+    response = requests.get('http://io-service:5001/io/products')
     products = response.json()
 
     # Filter products by seller
@@ -153,7 +153,7 @@ def get_personal_products(token_payload):
 @token_required
 def get_products_by_category(token_payload, category):
     # Get all products
-    response = requests.get('http://host.docker.internal:5001/io/products')
+    response = requests.get('http://io-service:5001/io/products')
     products = response.json()
 
     # Filter products by category
@@ -166,7 +166,7 @@ def get_products_by_category(token_payload, category):
 @token_required
 def get_products_by_seller(token_payload, seller):
     # Get all products
-    response = requests.get('http://host.docker.internal:5001/io/products')
+    response = requests.get('http://io-service:5001/io/products')
     products = response.json()
 
     # Filter products by seller
@@ -179,7 +179,7 @@ def get_products_by_seller(token_payload, seller):
 @token_required
 def search_products(token_payload, keyname):
     # Get all products
-    response = requests.get('http://host.docker.internal:5001/io/products')
+    response = requests.get('http://io-service:5001/io/products')
     products = response.json()
 
     # Filter products by name (allow partial match)
@@ -196,7 +196,7 @@ def delete_product(token_payload, id):
         return Response(status=403)
     
     # Check if product exists and belongs to seller
-    response = requests.get(f'http://host.docker.internal:5001/io/product/{id}')
+    response = requests.get(f'http://io-service:5001/io/product/{id}')
     if response.status_code == 404:
         return Response(status=404)
     
@@ -205,7 +205,7 @@ def delete_product(token_payload, id):
         return Response(status=403)
     
     # Call io-service endpoint to delete product
-    response = requests.delete(f'http://host.docker.internal:5001/io/product/{id}')
+    response = requests.delete(f'http://io-service:5001/io/product/{id}')
 
     # Update metrics
     if response.status_code == 200:
@@ -232,7 +232,7 @@ def update_product(token_payload, id):
         return Response(status=403)
     
     # Check if product exists and belongs to seller
-    response = requests.get(f'http://host.docker.internal:5001/io/product/{id}')
+    response = requests.get(f'http://io-service:5001/io/product/{id}')
     if response.status_code == 404:
         return Response(status=404)
     
@@ -288,7 +288,7 @@ def update_product(token_payload, id):
         new_payload['category_id'] = category_id
     
     # Call io-service endpoint to update product
-    response = requests.put(f'http://host.docker.internal:5001/io/product/{id}', json=new_payload)
+    response = requests.put(f'http://io-service:5001/io/product/{id}', json=new_payload)
     
     return Response(status=response.status_code)
 # ------------- Start Flask server
