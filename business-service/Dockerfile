@@ -9,7 +9,6 @@ RUN pip install -r requirements.txt
 
 # Copy the source code into the container
 ADD business-service/*.py /business-service/
-COPY auth-server/utils.py /business-service/
 
 # Expose the port that the Flask app runs on
 EXPOSE 4001
