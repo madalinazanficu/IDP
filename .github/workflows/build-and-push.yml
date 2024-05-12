@@ -1,0 +1,35 @@
+name: Proiect IDP 2024
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build auth-server Docker image
+        run: docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/auth-server:latest -f ./auth-server/Dockerfile .
+
+      - name: Build io-service Docker image
+        run: docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/io-service:latest -f ./io-service/Dockerfile .
+
+      - name: Build business-service Docker image
+        run: docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/business-service:latest -f ./business-service/Dockerfile .
+
+      - name: Push auth-server Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/auth-server:latest
+
+      - name: Push io-service Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/io-service:latest
+
+      - name: Push business-service Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/business-service:latest
